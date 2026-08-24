@@ -18,6 +18,11 @@ generate real accelerometer input.
 
 ## What's on the home screen
 
+<!-- Capture: a screenshot of the example app's home screen, with the
+     floating bug-report button visible in its default position. Save
+     as docs/images/example-home-screen.png. -->
+![The example app's home screen, showing the demo action buttons and the floating bug-report button](../docs/images/example-home-screen.png)
+
 | Button | Demonstrates |
 |---|---|
 | Navigate | `FlightRecorderNavigatorObserver` recording a real push/pop |

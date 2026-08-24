@@ -4,8 +4,8 @@
 
 **Status: work in progress**, not yet published to pub.dev. This README
 documents only what's implemented — the core event recorder and incident
-system (project Phases 3–7, 11). Every code example below has been
-checked against the real, current source; nothing here is aspirational.
+system. Every code example below has been checked against the real,
+current source; nothing here is aspirational.
 
 Network request recording lives in the separate, optional
 [`flutter_flight_recorder_dio`](../flutter_flight_recorder_dio) package,

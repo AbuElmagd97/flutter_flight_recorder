@@ -7,6 +7,13 @@ packages that together solve one problem: when a QA engineer or user
 finds a bug, developers should get the complete story of what happened
 before it — with as little manual effort as possible.
 
+<!-- Capture: a short screen recording of the full end-to-end flow —
+     shake the device, the reporter opens, fill in the bug report form,
+     tap submit, and the report preview screen appears. Convert to a
+     GIF and save as docs/images/shake-to-report-demo.gif. Keep it
+     short (a few seconds) and trimmed tightly to just that flow. -->
+![Shake-to-report flow: shake the device, fill in the bug report form, and view the generated report preview](docs/images/shake-to-report-demo.gif)
+
 **Status: work in progress**, not yet published to pub.dev.
 
 ## Packages
