@@ -1,0 +1,20 @@
+name: flutter_flight_recorder
+description: "Records a rolling timeline of app events (errors, network, navigation, actions, logs) so QA and developers get the complete story of what happened before a bug."
+version: 0.0.1
+homepage: https://github.com/AbuElmagd97/flutter_flight_recorder
+repository: https://github.com/AbuElmagd97/flutter_flight_recorder
+issue_tracker: https://github.com/AbuElmagd97/flutter_flight_recorder/issues
+documentation: https://github.com/AbuElmagd97/flutter_flight_recorder/tree/main/packages/flutter_flight_recorder
+
+environment:
+  sdk: ^3.0.0
+  flutter: ">=3.13.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0

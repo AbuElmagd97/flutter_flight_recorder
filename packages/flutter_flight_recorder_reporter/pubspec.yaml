@@ -1,0 +1,36 @@
+name: flutter_flight_recorder_reporter
+description: "QA bug reporting UI for flutter_flight_recorder: shake/button/manual trigger, screenshot capture, bug report form, and a human-readable Bug Story."
+version: 0.0.1
+homepage: https://github.com/AbuElmagd97/flutter_flight_recorder
+repository: https://github.com/AbuElmagd97/flutter_flight_recorder
+issue_tracker: https://github.com/AbuElmagd97/flutter_flight_recorder/issues
+documentation: https://github.com/AbuElmagd97/flutter_flight_recorder/tree/main/packages/flutter_flight_recorder_reporter
+
+environment:
+  sdk: ^3.10.0
+  # Forced up from core's >=3.13.0 floor by share_plus 13.3.0's own
+  # constraint (flutter: >=3.38.1), verified via pub.dev's API — see
+  # Phase 1's plan for why this isn't raised on the core package too.
+  flutter: ">=3.38.1"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Latest as of 2026-08-24, verified via pub.dev's API: 7.1.0, published
+  # 2026-06-26. 160/160 pub points, Flutter-favorite, fluttercommunity.dev
+  # publisher, all 6 platforms.
+  sensors_plus: ">=7.1.0 <8.0.0"
+  # Latest as of 2026-08-24, verified via pub.dev's API: 13.3.0, published
+  # 2026-07-23. 150/160 pub points, Flutter-favorite, fluttercommunity.dev
+  # publisher, all 6 platforms.
+  share_plus: ">=13.3.0 <14.0.0"
+  flutter_flight_recorder:
+    path: ../flutter_flight_recorder
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  # For SharePlatform, used to fake the share sheet in tests without
+  # touching a real platform channel.
+  share_plus_platform_interface: ^7.2.0
