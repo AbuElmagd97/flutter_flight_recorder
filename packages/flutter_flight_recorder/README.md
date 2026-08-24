@@ -254,7 +254,7 @@ reporter package.** `FlightRecorder` auto-captures exactly two fields:
 **It does not, and by design never will, automatically capture app
 version or build number.** Every incident you create will simply be
 missing that information unless you supply it yourself — this is not a
-"not implemented yet" gap that a later phase fills in; it's a permanent
+"not implemented yet" gap that will get filled in later; it's a permanent
 architectural decision, so don't assume it'll show up once the reporter
 package is added.
 
@@ -340,8 +340,8 @@ when not set/available, rather than included as `null`.
 `timeline` array — there are no separate `navigation_history` /
 `network_events` / `logs` arrays in the JSON**, even though
 `incident.navigationHistory` / `.networkEvents` / `.logs` exist as
-filtered *Dart-side* getters. This was a deliberate choice (Phase 4), not
-an oversight: it matches the spec's own literal JSON example and avoids
+filtered *Dart-side* getters. This was a deliberate choice, not
+an oversight: it keeps the export shape simple and avoids
 two representations of the same events drifting out of sync. If this
 ever needs to change — e.g. splitting `timeline` into per-category arrays
 in the wire format — that is a breaking change to the export shape and

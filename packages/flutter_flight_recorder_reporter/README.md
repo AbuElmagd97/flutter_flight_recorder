@@ -2,17 +2,16 @@
 
 QA bug-reporting UI for [`flutter_flight_recorder`](../flutter_flight_recorder): shake/button/manual trigger, screenshot capture, a bug report form, and a human-readable Bug Story.
 
-**Status: work in progress**, not yet published to pub.dev, part of the
-same multi-phase build as the core and Dio packages. Every code example
-below has been checked against the real, current source; nothing here is
-aspirational.
+**Status: work in progress**, not yet published to pub.dev. Every code
+example below has been checked against the real, current source; nothing
+here is aspirational.
 
 ## What problem does this solve? Why not just use a logger?
 
 See the [core package's README](../flutter_flight_recorder#what-problem-does-this-solve)
 — this package is the other half of that story: it's what turns "the
 timeline exists" into "one bug → one report → everything the team
-needs," per the product spec's core promise. A logger still leaves a
+needs." A logger still leaves a
 human to manually describe what happened and hunt for context; this
 package captures the context automatically and just asks the human what
 they saw.
@@ -25,7 +24,7 @@ they saw.
 * Screenshot capture that is structurally incapable of capturing the
   reporter's own UI, not just ordered to avoid it.
 * A bug report form (What happened / Expected / Actual / Severity) with
-  the exact fields the product spec asks for, no more.
+  the fields QA teams typically need, no more.
 * A deterministic, pure-function Bug Story generator — no AI, no
   invented causation.
 * Two report formats: a professional, self-contained HTML report
@@ -205,7 +204,7 @@ each item with its own icon (camera for Screenshot, phone for Current
 screen, timeline icon for User journey, route icon for Navigation
 history, wifi for Recent network activity, article icon for Application
 logs, info icon for App information). No other fields — deliberately,
-matching the product spec's "do not add unnecessary form fields."
+to avoid unnecessary form fields.
 
 `FlightRecorder.createIncident` is called with the "What happened?" text
 as `title`, and Expected/Actual/Severity as `QaReportData`. There's no

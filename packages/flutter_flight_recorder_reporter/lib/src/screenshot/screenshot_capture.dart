@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 ///
 /// Returns `null` on any failure (no boundary attached yet, capture
 /// throws, etc.) rather than throwing — screenshot capture is explicitly
-/// optional per the product spec, and a failure here must not crash the
+/// optional, and a failure here must not crash the
 /// reporter flow. Callers are expected to surface `null` to the user as
 /// "screenshot unavailable" rather than pretending it succeeded.
 class ScreenshotCapture {

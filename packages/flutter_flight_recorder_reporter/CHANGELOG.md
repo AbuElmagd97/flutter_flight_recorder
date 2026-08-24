@@ -41,7 +41,7 @@ Work in progress — not yet published to pub.dev.
   platform) is a separate path handled by `FlightRecorder`'s own
   automatic error capture, not this — see the doc comment on
   `_maybeStartShake` for why those are two different cases. Now also
-  covered by a test (Phase 11 audit) that simulates that exact failure.
+  covered by a test that simulates that exact failure.
 * Fix: `IncidentHtmlReport`'s timeline rows for `action` and `log`
   category events now render their metadata (as `key: value` pairs,
   same as `navigation`/`network` rows) — they previously rendered name

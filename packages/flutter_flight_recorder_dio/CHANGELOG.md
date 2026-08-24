@@ -11,5 +11,5 @@ Work in progress — not yet published to pub.dev.
 * Query-parameter sanitization for the recorded URL
   (`sensitiveQueryParams`, defaults to the core package's
   `defaultSensitiveKeys`).
-* Pinned to `dio: ">=5.11.0 <6.0.0"` — latest stable 5.x as of the phase
-  it was added, verified via pub.dev's API.
+* Pinned to `dio: ">=5.11.0 <6.0.0"` — latest stable 5.x at time of
+  writing, verified via pub.dev's API.

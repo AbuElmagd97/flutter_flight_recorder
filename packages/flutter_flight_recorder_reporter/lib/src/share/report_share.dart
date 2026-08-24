@@ -15,8 +15,8 @@ import '../export/incident_html_report.dart';
 ///
 /// `XFile.fromData`'s own `name:` parameter is silently ignored on every
 /// platform except web (`cross_file`'s `dart:io` implementation derives
-/// `.name` from a `path` instead) — found while testing this class in an
-/// earlier phase. The filenames actually used are set via
+/// `.name` from a `path` instead) — found while testing this class. The
+/// filenames actually used are set via
 /// `ShareParams.fileNameOverrides` instead, which is `share_plus`'s
 /// documented way to name in-memory files correctly on every platform.
 ///

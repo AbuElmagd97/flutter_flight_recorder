@@ -9,8 +9,8 @@ documentation: https://github.com/AbuElmagd97/flutter_flight_recorder/tree/main/
 environment:
   sdk: ^3.10.0
   # Forced up from core's >=3.13.0 floor by share_plus 13.3.0's own
-  # constraint (flutter: >=3.38.1), verified via pub.dev's API — see
-  # Phase 1's plan for why this isn't raised on the core package too.
+  # constraint (flutter: >=3.38.1), verified via pub.dev's API. The core
+  # package has no such dependency, so its own floor stays lower.
   flutter: ">=3.38.1"
 
 dependencies:

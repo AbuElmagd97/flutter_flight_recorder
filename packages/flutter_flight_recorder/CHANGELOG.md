@@ -31,10 +31,9 @@ Work in progress — not yet published to pub.dev.
   described a scenario (an incident capturing events recorded before a
   *live* session was disabled) that the API doesn't actually support,
   since `enabled` is fixed per session and can only change via a fresh
-  `init()` call, which resets the buffer. Found during the Phase 11 test
-  audit.
+  `init()` call, which resets the buffer. Found during a test-suite audit.
 * Fix: `QaReportData`'s doc comment no longer describes the reporter UI
-  as a future phase — it exists, in `flutter_flight_recorder_reporter`.
+  as not yet built — it exists, in `flutter_flight_recorder_reporter`.
 
 Not implemented, and not currently planned: Navigator 2.0 / `go_router` /
 `auto_route` support, content-aware (as opposed to key-name) privacy

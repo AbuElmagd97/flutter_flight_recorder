@@ -25,8 +25,8 @@ const String unnamedRouteLabel = '<unnamed>';
 /// expected rather than a mistake: it silently does nothing until
 /// [FlightRecorder.isInitialized], instead of raising a debug assertion.
 ///
-/// This class has no route-filtering hook today. A later phase (the QA
-/// reporter) will need its own internal navigation — for showing a
+/// This class has no route-filtering hook today. The QA reporter
+/// package will need its own internal navigation — for showing a
 /// screenshot preview, the bug report form, etc. — excluded from a real
 /// user's navigation history. If that turns out to require filtering
 /// here rather than being handled by, e.g., an [Overlay] instead of

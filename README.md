@@ -41,11 +41,6 @@ three packages together — see its own README for what it exercises and
 a manual verification checklist for the things that can only be
 confirmed on a real device.
 
-## Product spec
-
-The full product specification this project was built against is
-[`PRODUCT_SPEC.md`](PRODUCT_SPEC.md).
-
 ## License
 
 MIT — see [`LICENSE`](LICENSE). Each package also carries its own

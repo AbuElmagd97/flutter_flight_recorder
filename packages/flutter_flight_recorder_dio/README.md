@@ -2,8 +2,7 @@
 
 Dio interceptor for [`flutter_flight_recorder`](../flutter_flight_recorder): records HTTP requests (method, sanitized URL, duration, status, errors) into the flight recorder timeline.
 
-**Status: work in progress**, not yet published to pub.dev, part of the
-same multi-phase build as the core and reporter packages. Every code
+**Status: work in progress**, not yet published to pub.dev. Every code
 example below has been checked against the real, current source; nothing
 here is aspirational.
 

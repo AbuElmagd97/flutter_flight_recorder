@@ -239,7 +239,7 @@ void main() {
       // reporter_widget.dart, a failed initial listen() call is
       // reported by EventChannel straight to FlutterError.reportError,
       // not through the stream's own error channel — the expected,
-      // already-decided behavior (Phase 10) is that this gets picked
+      // already-decided behavior is that this gets picked
       // up by FlightRecorder's own automatic error capture, the same
       // as any other uncaught framework error, rather than crashing
       // the app or leaving shake in a broken state that takes the rest

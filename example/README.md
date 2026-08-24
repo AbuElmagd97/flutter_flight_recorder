@@ -45,8 +45,8 @@ exists specifically to make that possible. Check these by hand:
   `Alignment.topRight` — right where a notch, Dynamic Island, or status
   bar commonly sits. Confirm it sits clearly *below* that system UI, not
   overlapping it, on a real notched device. (This was a real bug, fixed
-  in Phase 10 — `SafeArea` + `MediaQuery.fromView` — see the reporter
-  package's CHANGELOG.)
+  with `SafeArea` + `MediaQuery.fromView` — see the reporter package's
+  CHANGELOG.)
 - [ ] **Screenshot appearance.** Open the reporter (any trigger) and look
   at the screenshot preview on the form. Confirm it's a correct capture
   of the home screen, not blank, not distorted, and does not include the

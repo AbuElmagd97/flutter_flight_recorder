@@ -22,8 +22,7 @@ separate** rather than blurred into one "supported" checkmark:
   package is not the same as a real platform build succeeding, and isn't
   claimed to be.
 
-Per the product spec's own instruction: **never claim support that
-wasn't verified.** Where a table below says "No" in the Verified column,
+**Never claim support that wasn't verified.** Where a table below says "No" in the Verified column,
 that means exactly that — not verified — regardless of what the
 adjacent "no platform-specific code" or "platforms declared" columns
 say. A "Yes" in either of those other columns is not a soft way of
@@ -41,7 +40,7 @@ feature is either pure Dart or a Flutter SDK API
 | Android | Yes | No |
 | iOS | Yes | No |
 | Web | Yes | No |
-| macOS | Yes | Yes — example app built and launched (Phase 10) |
+| macOS | Yes | Yes — example app built and launched |
 | Windows | Yes | No |
 | Linux | Yes | No |
 
@@ -56,7 +55,7 @@ declares all six platforms.
 | Android | Yes | No |
 | iOS | Yes | No |
 | Web | Yes | No |
-| macOS | Yes | Yes — example app built and launched (Phase 10) |
+| macOS | Yes | Yes — example app built and launched |
 | Windows | Yes | No |
 | Linux | Yes | No |
 
@@ -69,8 +68,8 @@ Flutter SDK), and two depend on plugins (`sensors_plus` for shake,
 
 | Feature | Mechanism | Platforms the dependency declares | Verified |
 |---|---|---|---|
-| Bug report form / preview screen | Pure Flutter widgets | All 6 | macOS only (Phase 10) |
-| Screenshot capture | `RepaintBoundary` (Flutter SDK) | All 6 | macOS only (Phase 10) |
+| Bug report form / preview screen | Pure Flutter widgets | All 6 | macOS only |
+| Screenshot capture | `RepaintBoundary` (Flutter SDK) | All 6 | macOS only |
 | Shake trigger | `sensors_plus` | Android, iOS, Windows, Linux, macOS, Web | **No** — every shake test in this repo feeds synthetic accelerometer samples directly into the detection logic; the real `sensors_plus` stream has never been exercised on any platform |
 | Sharing (HTML/JSON export) | `share_plus` | Android, iOS, Windows, Linux, macOS, Web | **No** — every share test uses an injected fake `SharePlatform`; the real platform share sheet has never been exercised |
 
