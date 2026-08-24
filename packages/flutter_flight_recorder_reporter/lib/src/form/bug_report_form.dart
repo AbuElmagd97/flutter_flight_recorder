@@ -36,7 +36,7 @@ typedef BugReportSubmit =
 
 /// The QA bug report form: what happened, expected/actual, severity, and
 /// the automatic-attachments checklist. Deliberately has no other fields
-/// — the spec is explicit that V1 should not grow the form beyond this.
+/// — this form should not grow beyond what QA actually needs to report a bug.
 class BugReportForm extends StatefulWidget {
   const BugReportForm({
     super.key,

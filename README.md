@@ -16,6 +16,64 @@ before it — with as little manual effort as possible.
 
 **Status: work in progress**, not yet published to pub.dev.
 
+## Which package do you need?
+
+| I want to...                                  | Install this |
+|------------------------------------------------|--------------|
+| Record errors, navigation, and actions          | `flutter_flight_recorder` |
+| ...and also auto-record my Dio HTTP requests    | + `flutter_flight_recorder_dio` |
+| ...and let QA report bugs with one tap          | + `flutter_flight_recorder_reporter` |
+
+Most apps start with just the first package.
+
+## Quick start
+
+Full setup, all three packages together:
+
+```yaml
+dependencies:
+  flutter_flight_recorder: ^0.0.1
+  flutter_flight_recorder_dio: ^0.0.1
+  flutter_flight_recorder_reporter: ^0.0.1
+```
+
+```dart
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_flight_recorder/flutter_flight_recorder.dart';
+import 'package:flutter_flight_recorder_dio/flutter_flight_recorder_dio.dart';
+import 'package:flutter_flight_recorder_reporter/flutter_flight_recorder_reporter.dart';
+
+void main() {
+  FlightRecorder.init();
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FlutterFlightRecorderReporter(
+      child: MaterialApp(
+        navigatorObservers: [FlightRecorderNavigatorObserver()],
+        home: const HomeScreen(),
+      ),
+    );
+  }
+}
+
+final dio = Dio()..interceptors.add(FlightRecorderDioInterceptor());
+```
+
+Only using the core recorder? Skip the Dio and reporter lines above —
+see the table above for what you actually need.
+
+See each package's own README for its full API and configuration
+options: [`flutter_flight_recorder`](packages/flutter_flight_recorder),
+[`flutter_flight_recorder_dio`](packages/flutter_flight_recorder_dio),
+[`flutter_flight_recorder_reporter`](packages/flutter_flight_recorder_reporter).
+
 ## Packages
 
 * [`flutter_flight_recorder`](packages/flutter_flight_recorder) — the

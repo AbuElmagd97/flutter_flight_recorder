@@ -12,7 +12,7 @@ const String _startTimeExtraKey = '_flutter_flight_recorder_start_time';
 /// One network event is recorded per request, when it finishes (success
 /// or failure) — not a separate "started" event — carrying method, a
 /// sanitized URL, timestamp, duration, status code, and error type
-/// together, matching how the package spec describes what's captured.
+/// together in a single event.
 ///
 /// Request and response bodies are **disabled by default**. Enable
 /// [captureRequestBody] / [captureResponseBody] explicitly if you need

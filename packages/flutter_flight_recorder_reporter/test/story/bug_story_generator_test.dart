@@ -103,7 +103,7 @@ void main() {
       );
     });
 
-    test('describes a failed network request matching the spec example', () {
+    test('describes a failed network request', () {
       final story = BugStoryGenerator.generate(
         _incidentWith([
           _event(
