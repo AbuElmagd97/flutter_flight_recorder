@@ -198,6 +198,13 @@ checkbox.
 
 ## The bug report form
 
+<!-- Capture: a screenshot of the bug report form fully visible on
+     screen — What happened / Expected / Actual / Severity fields filled
+     in with example text, and the "Automatically attached" checklist
+     with its icons visible below them. Save as
+     docs/images/qa-report-form.png. -->
+![The bug report form, showing the What happened, Expected, Actual, and Severity fields alongside the automatically-attached checklist](../../docs/images/qa-report-form.png)
+
 What happened (required), Expected, Actual, Severity (required:
 Low/Medium/High/Critical), and the "Automatically attached" checklist —
 each item with its own icon (camera for Screenshot, phone for Current
@@ -234,6 +241,12 @@ state instead of animating.
 
 ## Exporting JSON and sharing (Report formats)
 
+<!-- Capture: a short screen recording scrolling through a generated
+     HTML report opened in a desktop browser — showing the
+     severity-colored header banner, incident ID/title, and the event
+     timeline below it. Save as docs/images/html-report-browser.gif. -->
+![Scrolling through a generated HTML incident report in a browser, showing the severity-colored header and event timeline](../../docs/images/html-report-browser.gif)
+
 Two formats, both zero-dependency (no `pdf`/`printing` package, no new
 dependency of any kind — pure Dart string templating for HTML, and
 `dart:convert` for JSON, both already available):
@@ -262,9 +275,8 @@ dependency of any kind — pure Dart string templating for HTML, and
 
 * **JSON — the explicit, secondary format** (`Export JSON` button), for
   developers/backends/tooling that need to parse the report
-  programmatically. Unchanged from earlier phases — still
-  `incident.toJson()` (from the core package), still versioned via
-  `schema_version`.
+  programmatically. Still `incident.toJson()` (from the core package),
+  still versioned via `schema_version`.
 
 Both formats are shared entirely in memory via `XFile.fromData` — no
 `path_provider` dependency, no temp file written to disk. One thing
