@@ -23,6 +23,11 @@ and the QA bug-reporting UI lives in the separate, optional
 [`flutter_flight_recorder_reporter`](../flutter_flight_recorder_reporter)
 package — this core package depends on neither and stays dependency-free.
 
+![Shake-to-report flow: shake the device, fill in the bug report form, and view the generated report preview](https://raw.githubusercontent.com/AbuElmagd97/flutter_flight_recorder/main/docs/images/shake-to-report-demo.gif)
+
+This flow shown above uses the optional `flutter_flight_recorder_reporter`
+package — see below for what's actually in this core package.
+
 ## What problem does this solve?
 
 When a QA engineer or user finds a bug, a developer needs the complete
@@ -73,7 +78,7 @@ else you already use.
 
 ```yaml
 dependencies:
-  flutter_flight_recorder: ^0.0.3
+  flutter_flight_recorder: ^0.0.6
 ```
 
 ## Quick start

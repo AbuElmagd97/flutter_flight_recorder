@@ -1,6 +1,6 @@
 name: flutter_flight_recorder_dio
 description: "Dio interceptor for flutter_flight_recorder: records HTTP requests (method, sanitized URL, duration, status, errors) into the flight recorder timeline."
-version: 0.0.5
+version: 0.0.6
 homepage: https://github.com/AbuElmagd97/flutter_flight_recorder
 repository: https://github.com/AbuElmagd97/flutter_flight_recorder
 issue_tracker: https://github.com/AbuElmagd97/flutter_flight_recorder/issues
@@ -17,7 +17,7 @@ dependencies:
   # (https://pub.dev/api/packages/dio): 5.11.0, published 2026-07-25.
   # 160/160 pub points, publisher flutter.cn, all 6 platforms.
   dio: ">=5.11.0 <6.0.0"
-  flutter_flight_recorder: ^0.0.5
+  flutter_flight_recorder: ^0.0.6
 
 dev_dependencies:
   flutter_test:

@@ -15,6 +15,10 @@ QA bug-reporting UI for [`flutter_flight_recorder`](../flutter_flight_recorder):
 **Status: published on pub.dev.** Every code example below has been
 checked against the real, current source; nothing here is aspirational.
 
+![Shake-to-report flow: shake the device, fill in the bug report form, and view the generated report preview](https://raw.githubusercontent.com/AbuElmagd97/flutter_flight_recorder/main/docs/images/shake-to-report-demo.gif)
+
+Shake to open the reporter, describe the bug, and get a full report.
+
 ## What problem does this solve? Why not just use a logger?
 
 See the [core package's README](../flutter_flight_recorder#what-problem-does-this-solve)
@@ -47,7 +51,7 @@ they saw.
 
 ```yaml
 dependencies:
-  flutter_flight_recorder_reporter: ^0.0.3
+  flutter_flight_recorder_reporter: ^0.0.6
 ```
 
 ## Quick start

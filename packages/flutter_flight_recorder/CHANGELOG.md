@@ -1,3 +1,21 @@
+<!--
+  Reminder: any version bump must also update the install-instruction
+  version pins in this package's own README.md and in the repo-root
+  WALKTHROUGH.md, not just pubspec.yaml — a pin left stale here has
+  bitten us before.
+-->
+
+## 0.0.6
+
+Docs-only patch — no changes to `lib/` or `test/`.
+
+* Added the shake-to-report-demo GIF to this README (with a caption
+  noting it demonstrates the optional `flutter_flight_recorder_reporter`
+  package, not this core package alone).
+* Fixed stale `^0.0.3` install-instruction version pins in this
+  README and the repo-root `WALKTHROUGH.md` — they hadn't tracked the
+  last few version bumps.
+
 ## 0.0.5
 
 Fix: the logo in the README used a relative path (`docs/images/...`),

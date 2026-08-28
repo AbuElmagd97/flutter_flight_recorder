@@ -1,3 +1,17 @@
+<!--
+  Reminder: any version bump must also update the install-instruction
+  version pins in this package's own README.md and in the repo-root
+  WALKTHROUGH.md, not just pubspec.yaml — a pin left stale here has
+  bitten us before.
+-->
+
+## 0.0.6
+
+Docs-only patch — no changes to `lib/` or `test/`. Fixed a stale
+`^0.0.3` install-instruction version pin in this README and the
+repo-root `WALKTHROUGH.md`, and bumped the `flutter_flight_recorder`
+dependency constraint (`^0.0.6`) to track that package's own release.
+
 ## 0.0.5
 
 Fix: the logo in the README used a relative path (`docs/images/...`),
