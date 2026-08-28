@@ -14,7 +14,7 @@ before it — with as little manual effort as possible.
      short (a few seconds) and trimmed tightly to just that flow. -->
 ![Shake-to-report flow: shake the device, fill in the bug report form, and view the generated report preview](docs/images/shake-to-report-demo.gif)
 
-**Status: work in progress**, not yet published to pub.dev.
+**Status:** All three packages are published on pub.dev.
 
 ## Which package do you need?
 

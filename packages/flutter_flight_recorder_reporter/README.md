@@ -1,10 +1,14 @@
 # flutter_flight_recorder_reporter
 
+[![pub package](https://img.shields.io/pub/v/flutter_flight_recorder_reporter.svg)](https://pub.dev/packages/flutter_flight_recorder_reporter)
+[![pub points](https://img.shields.io/pub/points/flutter_flight_recorder_reporter)](https://pub.dev/packages/flutter_flight_recorder_reporter/score)
+[![likes](https://img.shields.io/pub/likes/flutter_flight_recorder_reporter)](https://pub.dev/packages/flutter_flight_recorder_reporter/score)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 QA bug-reporting UI for [`flutter_flight_recorder`](../flutter_flight_recorder): shake/button/manual trigger, screenshot capture, a bug report form, and a human-readable Bug Story.
 
-**Status: work in progress**, not yet published to pub.dev. Every code
-example below has been checked against the real, current source; nothing
-here is aspirational.
+**Status: published on pub.dev.** Every code example below has been
+checked against the real, current source; nothing here is aspirational.
 
 ## What problem does this solve? Why not just use a logger?
 
@@ -36,13 +40,9 @@ they saw.
 
 ## Installation
 
-Not yet published — same situation as `flutter_flight_recorder_dio`.
-During development, depend on it via path:
-
 ```yaml
 dependencies:
-  flutter_flight_recorder_reporter:
-    path: ../path/to/flutter_flight_recorder/packages/flutter_flight_recorder_reporter
+  flutter_flight_recorder_reporter: ^0.0.1
 ```
 
 ## Quick start

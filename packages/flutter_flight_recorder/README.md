@@ -1,11 +1,16 @@
 # flutter_flight_recorder
 
+[![pub package](https://img.shields.io/pub/v/flutter_flight_recorder.svg)](https://pub.dev/packages/flutter_flight_recorder)
+[![pub points](https://img.shields.io/pub/points/flutter_flight_recorder)](https://pub.dev/packages/flutter_flight_recorder/score)
+[![likes](https://img.shields.io/pub/likes/flutter_flight_recorder)](https://pub.dev/packages/flutter_flight_recorder/score)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 > Everything that happened before the bug.
 
-**Status: work in progress**, not yet published to pub.dev. This README
-documents only what's implemented — the core event recorder and incident
-system. Every code example below has been checked against the real,
-current source; nothing here is aspirational.
+**Status: published on pub.dev.** This README documents only what's
+implemented — the core event recorder and incident system. Every code
+example below has been checked against the real, current source;
+nothing here is aspirational.
 
 Network request recording lives in the separate, optional
 [`flutter_flight_recorder_dio`](../flutter_flight_recorder_dio) package,
@@ -61,12 +66,9 @@ else you already use.
 
 ## Installation
 
-Not yet published to pub.dev. During development, depend on it via path:
-
 ```yaml
 dependencies:
-  flutter_flight_recorder:
-    path: ../path/to/flutter_flight_recorder/packages/flutter_flight_recorder
+  flutter_flight_recorder: ^0.0.1
 ```
 
 ## Quick start

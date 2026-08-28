@@ -1,10 +1,14 @@
 # flutter_flight_recorder_dio
 
+[![pub package](https://img.shields.io/pub/v/flutter_flight_recorder_dio.svg)](https://pub.dev/packages/flutter_flight_recorder_dio)
+[![pub points](https://img.shields.io/pub/points/flutter_flight_recorder_dio)](https://pub.dev/packages/flutter_flight_recorder_dio/score)
+[![likes](https://img.shields.io/pub/likes/flutter_flight_recorder_dio)](https://pub.dev/packages/flutter_flight_recorder_dio/score)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Dio interceptor for [`flutter_flight_recorder`](../flutter_flight_recorder): records HTTP requests (method, sanitized URL, duration, status, errors) into the flight recorder timeline.
 
-**Status: work in progress**, not yet published to pub.dev. Every code
-example below has been checked against the real, current source; nothing
-here is aspirational.
+**Status: published on pub.dev.** Every code example below has been
+checked against the real, current source; nothing here is aspirational.
 
 ## What problem does this solve? Why not just use a logger?
 
@@ -26,15 +30,9 @@ call by hand.
 
 ## Installation
 
-Not yet published. During development, depend on it via path (this
-package itself does the same for `flutter_flight_recorder`, which is why
-`dart pub publish --dry-run` currently warns about a path dependency —
-that's expected until the core package is actually published):
-
 ```yaml
 dependencies:
-  flutter_flight_recorder_dio:
-    path: ../path/to/flutter_flight_recorder/packages/flutter_flight_recorder_dio
+  flutter_flight_recorder_dio: ^0.0.1
 ```
 
 ## Quick start
