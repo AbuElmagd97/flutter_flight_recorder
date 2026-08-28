@@ -1,3 +1,10 @@
+## 0.0.5
+
+Fix: the logo in the README used a relative path (`docs/images/...`),
+which renders fine on GitHub but not on pub.dev, which serves the
+README disconnected from the repo's file structure. Switched to
+absolute `raw.githubusercontent.com` URLs.
+
 ## 0.0.4
 
 Added package logo.

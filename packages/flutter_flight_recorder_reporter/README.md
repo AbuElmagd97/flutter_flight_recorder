@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../../docs/images/logo.png">
-  <img alt="flutter_flight_recorder logo" src="../../docs/images/logo-light.png" width="200">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/AbuElmagd97/flutter_flight_recorder/main/docs/images/logo.png">
+  <img alt="flutter_flight_recorder logo" src="https://raw.githubusercontent.com/AbuElmagd97/flutter_flight_recorder/main/docs/images/logo-light.png" width="200">
 </picture>
 
 # flutter_flight_recorder_reporter
@@ -208,7 +208,7 @@ checkbox.
      in with example text, and the "Automatically attached" checklist
      with its icons visible below them. Save as
      docs/images/qa-report-form.png. -->
-![The bug report form, showing the What happened, Expected, Actual, and Severity fields alongside the automatically-attached checklist](../../docs/images/qa-report-form.png)
+![The bug report form, showing the What happened, Expected, Actual, and Severity fields alongside the automatically-attached checklist](https://raw.githubusercontent.com/AbuElmagd97/flutter_flight_recorder/main/docs/images/qa-report-form.png)
 
 What happened (required), Expected, Actual, Severity (required:
 Low/Medium/High/Critical), and the "Automatically attached" checklist —
@@ -250,7 +250,7 @@ state instead of animating.
      HTML report opened in a desktop browser — showing the
      severity-colored header banner, incident ID/title, and the event
      timeline below it. Save as docs/images/html-report-browser.gif. -->
-![Scrolling through a generated HTML incident report in a browser, showing the severity-colored header and event timeline](../../docs/images/html-report-browser.gif)
+![Scrolling through a generated HTML incident report in a browser, showing the severity-colored header and event timeline](https://raw.githubusercontent.com/AbuElmagd97/flutter_flight_recorder/main/docs/images/html-report-browser.gif)
 
 Two formats, both zero-dependency (no `pdf`/`printing` package, no new
 dependency of any kind — pure Dart string templating for HTML, and
