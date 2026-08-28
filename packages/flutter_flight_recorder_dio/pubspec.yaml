@@ -17,8 +17,7 @@ dependencies:
   # (https://pub.dev/api/packages/dio): 5.11.0, published 2026-07-25.
   # 160/160 pub points, publisher flutter.cn, all 6 platforms.
   dio: ">=5.11.0 <6.0.0"
-  flutter_flight_recorder:
-    path: ../flutter_flight_recorder
+  flutter_flight_recorder: ^0.0.1
 
 dev_dependencies:
   flutter_test:

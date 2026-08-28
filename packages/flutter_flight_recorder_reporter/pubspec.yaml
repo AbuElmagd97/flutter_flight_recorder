@@ -24,8 +24,7 @@ dependencies:
   # 2026-07-23. 150/160 pub points, Flutter-favorite, fluttercommunity.dev
   # publisher, all 6 platforms.
   share_plus: ">=13.3.0 <14.0.0"
-  flutter_flight_recorder:
-    path: ../flutter_flight_recorder
+  flutter_flight_recorder: ^0.0.1
 
 dev_dependencies:
   flutter_test:
