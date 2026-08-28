@@ -68,7 +68,7 @@ else you already use.
 
 ```yaml
 dependencies:
-  flutter_flight_recorder: ^0.0.2
+  flutter_flight_recorder: ^0.0.3
 ```
 
 ## Quick start

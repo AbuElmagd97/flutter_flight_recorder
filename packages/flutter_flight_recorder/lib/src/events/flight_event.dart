@@ -17,6 +17,13 @@ enum EventSeverity { debug, info, warning, error }
 /// `FlightRecorder.recordAction` / `.log` / `.recordError` instead.
 @immutable
 class FlightEvent {
+  /// Creates a single timeline entry.
+  ///
+  /// [metadata] is copied into an unmodifiable map, so later mutation of
+  /// the map passed in has no effect on this event. Application code
+  /// should prefer `FlightRecorder.recordAction` / `.log` /
+  /// `.recordError` over constructing a [FlightEvent] directly — see the
+  /// class doc comment for why.
   FlightEvent({
     required this.id,
     required this.timestamp,
@@ -29,8 +36,10 @@ class FlightEvent {
   /// Unique within a recording session. Not a global UUID.
   final String id;
 
+  /// When this event was recorded.
   final DateTime timestamp;
 
+  /// Which kind of activity this event represents.
   final EventCategory category;
 
   /// Short human-meaningful label, e.g. `'save_profile_tapped'` or a route
@@ -41,8 +50,12 @@ class FlightEvent {
   /// buffer. Unmodifiable.
   final Map<String, Object?> metadata;
 
+  /// Set for `log` and `error` category events; `null` for the others,
+  /// which have no notion of severity.
   final EventSeverity? severity;
 
+  /// JSON-safe representation of this event, e.g. for embedding in an
+  /// incident's `timeline` array.
   Map<String, Object?> toJson() => {
         'id': id,
         'timestamp': timestamp.toIso8601String(),

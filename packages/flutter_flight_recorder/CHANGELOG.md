@@ -1,3 +1,16 @@
+## 0.0.3
+
+Docs/example-only patch — no changes to any public API or behavior.
+
+* Added dartdoc comments to `FlightEvent`'s constructor, `category`,
+  `severity`, `timestamp`, and `toJson`, closing a pub.dev score gap
+  (missing documentation on public members).
+* Added `example/` (a minimal, runnable app showing this package in
+  isolation — `FlightRecorder.init()`, `recordAction`/`log`, and
+  `createIncident()`), required by pub.dev's scorer at this package's
+  own path, separate from the repo-root example app that demonstrates
+  all three packages together.
+
 ## 0.0.2
 
 Documentation updates only — no changes to `lib/` or `test/`. README

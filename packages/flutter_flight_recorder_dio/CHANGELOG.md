@@ -1,3 +1,9 @@
+## 0.0.3
+
+Docs-only patch — no changes to `lib/` or `test/`. Bumped the
+`flutter_flight_recorder` dependency constraint (`^0.0.3`) to track that
+package's own docs/example-only patch release.
+
 ## 0.0.2
 
 Documentation updates only — no changes to `lib/` or `test/`. README

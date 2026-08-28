@@ -7,7 +7,7 @@ Follow these steps in order. Each one builds on the last.
 Add this to your `pubspec.yaml`, under `dependencies:`
 
 ```yaml
-flutter_flight_recorder: ^0.0.2
+flutter_flight_recorder: ^0.0.3
 ```
 
 Run `flutter pub get`.
@@ -59,7 +59,7 @@ Skip this step entirely if you only need background recording.
 Add this pubspec.yaml dependency first, the same way as Step 1:
 
 ```yaml
-flutter_flight_recorder_reporter: ^0.0.2
+flutter_flight_recorder_reporter: ^0.0.3
 ```
 
 Wrap your app's root widget with `FlutterFlightRecorderReporter`:
@@ -90,7 +90,7 @@ Skip this step entirely if you don't use Dio.
 Add this pubspec.yaml dependency first, the same way as Step 1:
 
 ```yaml
-flutter_flight_recorder_dio: ^0.0.2
+flutter_flight_recorder_dio: ^0.0.3
 ```
 
 Then add this one line wherever you create your `Dio` instance:

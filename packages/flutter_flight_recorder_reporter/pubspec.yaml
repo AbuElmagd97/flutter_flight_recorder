@@ -1,6 +1,6 @@
 name: flutter_flight_recorder_reporter
 description: "QA bug reporting UI for flutter_flight_recorder: shake/button/manual trigger, screenshot capture, bug report form, and a human-readable Bug Story."
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/AbuElmagd97/flutter_flight_recorder
 repository: https://github.com/AbuElmagd97/flutter_flight_recorder
 issue_tracker: https://github.com/AbuElmagd97/flutter_flight_recorder/issues
@@ -24,7 +24,7 @@ dependencies:
   # 2026-07-23. 150/160 pub points, Flutter-favorite, fluttercommunity.dev
   # publisher, all 6 platforms.
   share_plus: ">=13.3.0 <14.0.0"
-  flutter_flight_recorder: ^0.0.2
+  flutter_flight_recorder: ^0.0.3
 
 dev_dependencies:
   flutter_test:

@@ -36,9 +36,9 @@ Full setup, all three packages together:
 
 ```yaml
 dependencies:
-  flutter_flight_recorder: ^0.0.2
-  flutter_flight_recorder_dio: ^0.0.2
-  flutter_flight_recorder_reporter: ^0.0.2
+  flutter_flight_recorder: ^0.0.3
+  flutter_flight_recorder_dio: ^0.0.3
+  flutter_flight_recorder_reporter: ^0.0.3
 ```
 
 ```dart

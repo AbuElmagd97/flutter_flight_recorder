@@ -42,7 +42,7 @@ they saw.
 
 ```yaml
 dependencies:
-  flutter_flight_recorder_reporter: ^0.0.2
+  flutter_flight_recorder_reporter: ^0.0.3
 ```
 
 ## Quick start
