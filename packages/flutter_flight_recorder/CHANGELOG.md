@@ -1,3 +1,7 @@
+## 0.0.4
+
+Added package logo.
+
 ## 0.0.3
 
 Docs/example-only patch — no changes to any public API or behavior.
