@@ -32,7 +32,7 @@ call by hand.
 
 ```yaml
 dependencies:
-  flutter_flight_recorder_dio: ^0.0.1
+  flutter_flight_recorder_dio: ^0.0.2
 ```
 
 ## Quick start

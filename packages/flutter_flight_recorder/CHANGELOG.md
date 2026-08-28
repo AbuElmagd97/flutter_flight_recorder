@@ -1,3 +1,11 @@
+## 0.0.2
+
+Documentation updates only — no changes to `lib/` or `test/`. README
+overhaul (pub.dev badges, published-package status, simplified
+installation instructions), a new root-level `WALKTHROUGH.md`, and the
+dio/reporter packages switching their dependency on this package from a
+path dependency to the published, hosted version.
+
 ## 0.0.1
 
 Work in progress — not yet published to pub.dev.
