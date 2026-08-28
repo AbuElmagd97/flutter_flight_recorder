@@ -1,3 +1,8 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../../docs/images/logo.png">
+  <img alt="flutter_flight_recorder logo" src="../../docs/images/logo-light.png" width="200">
+</picture>
+
 # flutter_flight_recorder_reporter
 
 [![pub package](https://img.shields.io/pub/v/flutter_flight_recorder_reporter.svg)](https://pub.dev/packages/flutter_flight_recorder_reporter)

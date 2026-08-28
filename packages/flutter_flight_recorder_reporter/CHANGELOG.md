@@ -1,3 +1,7 @@
+## 0.0.4
+
+Added package logo.
+
 ## 0.0.3
 
 Docs-only patch — no changes to `lib/` or `test/`. Bumped the
