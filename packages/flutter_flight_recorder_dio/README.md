@@ -148,8 +148,8 @@ package's own roadmap covers.
 ## Contributing
 
 Same as the [core package](../flutter_flight_recorder#contributing) —
-this project isn't published yet and doesn't have a separate
-contribution process for this package.
+this is a young, actively maintained project without a formal, separate
+contribution process for this package yet.
 
 ## License
 

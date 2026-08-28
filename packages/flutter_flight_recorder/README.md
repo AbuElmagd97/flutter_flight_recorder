@@ -404,8 +404,8 @@ silent behavior changes.
 
 ## Contributing
 
-This project isn't published yet and doesn't have an external
-contribution process set up. If you're working in this repository,
+This is a young, actively maintained project without a formal external
+contribution process yet. If you're working in this repository,
 match the conventions already established across the three packages:
 minimal dependencies (justify every one against pub.dev's own
 popularity/maintenance/platform-support signals), no fake or
