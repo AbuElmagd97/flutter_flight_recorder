@@ -1,3 +1,11 @@
+## 0.0.2
+
+Documentation updates only — no changes to `lib/` or `test/`. README
+overhaul (pub.dev badges, published-package status, simplified
+installation instructions) and a bumped `flutter_flight_recorder`
+dependency constraint (`^0.0.2`) to track that package's own docs-only
+patch release.
+
 ## 0.0.1
 
 Work in progress — not yet published to pub.dev.
