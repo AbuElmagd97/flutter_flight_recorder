@@ -339,4 +339,101 @@ void main() {
       expect(incident.trigger, 'manual');
     });
   });
+
+  group('newCorrelationId', () {
+    test('generates a COR-XXXXXXXXXXXX style id', () {
+      expect(
+        FlightRecorder.newCorrelationId(),
+        matches(RegExp(r'^COR-[0-9A-F]{12}$')),
+      );
+    });
+
+    test('generates a different id on each call', () {
+      final ids = List.generate(20, (_) => FlightRecorder.newCorrelationId());
+      expect(ids.toSet(), hasLength(20));
+    });
+
+    test('is opaque — carries no recognizable structure from app data', () {
+      // Not a formal proof of randomness, just a sanity check that the
+      // id isn't, say, derived from the current time or a counter that
+      // would make it predictable/guessable.
+      final first = FlightRecorder.newCorrelationId();
+      final second = FlightRecorder.newCorrelationId();
+      expect(first, isNot(second));
+      expect(first, isNot(contains(DateTime.now().year.toString())));
+    });
+  });
+
+  group('correlationId — optional param on record* methods', () {
+    setUp(FlightRecorder.init);
+
+    test(
+        'existing call sites with no correlationId compile and behave unchanged',
+        () {
+      FlightRecorder.recordAction('save_tapped');
+      FlightRecorder.log('hello');
+      FlightRecorder.recordError('boom');
+      FlightRecorder.recordNavigation('/profile', action: 'push');
+      FlightRecorder.recordNetwork('GET /profile');
+      FlightRecorder.recordLifecycle('resumed');
+
+      expect(FlightRecorder.debugEvents, hasLength(6));
+      expect(
+        FlightRecorder.debugEvents.every((e) => e.correlationId == null),
+        isTrue,
+      );
+    });
+
+    test('recordAction threads correlationId onto the recorded event', () {
+      FlightRecorder.recordAction('save_tapped', correlationId: 'COR-A');
+      expect(FlightRecorder.debugEvents.single.correlationId, 'COR-A');
+    });
+
+    test('recordNetwork threads correlationId onto the recorded event', () {
+      FlightRecorder.recordNetwork(
+        'PATCH /profile',
+        correlationId: 'COR-A',
+      );
+      expect(FlightRecorder.debugEvents.single.correlationId, 'COR-A');
+    });
+
+    test('recordError threads correlationId onto the recorded event', () {
+      FlightRecorder.recordError('boom', correlationId: 'COR-A');
+      expect(FlightRecorder.debugEvents.single.correlationId, 'COR-A');
+    });
+
+    test('recordNavigation threads correlationId onto the recorded event', () {
+      FlightRecorder.recordNavigation(
+        '/profile',
+        action: 'push',
+        correlationId: 'COR-A',
+      );
+      expect(FlightRecorder.debugEvents.single.correlationId, 'COR-A');
+    });
+
+    test('log threads correlationId onto the recorded event', () {
+      FlightRecorder.log('hello', correlationId: 'COR-A');
+      expect(FlightRecorder.debugEvents.single.correlationId, 'COR-A');
+    });
+
+    test('recordLifecycle threads correlationId onto the recorded event', () {
+      FlightRecorder.recordLifecycle('resumed', correlationId: 'COR-A');
+      expect(FlightRecorder.debugEvents.single.correlationId, 'COR-A');
+    });
+
+    test(
+      'no global correlation state leaks between unrelated calls — each '
+      'event only carries the id explicitly passed to it',
+      () {
+        FlightRecorder.recordAction('save_tapped', correlationId: 'COR-A');
+        FlightRecorder.recordAction('cancel_tapped');
+        FlightRecorder.recordAction('retry_tapped', correlationId: 'COR-B');
+
+        final events = FlightRecorder.debugEvents;
+        expect(events[0].correlationId, 'COR-A');
+        expect(events[1].correlationId, isNull);
+        expect(events[2].correlationId, 'COR-B');
+      },
+    );
+  });
 }

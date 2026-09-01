@@ -38,10 +38,13 @@ they saw.
   reporter's own UI, not just ordered to avoid it.
 * A bug report form (What happened / Expected / Actual / Severity) with
   the fields QA teams typically need, no more.
-* A deterministic, pure-function Bug Story generator — no AI, no
-  invented causation.
-* Two report formats: a professional, self-contained HTML report
-  (default/primary) and machine-readable JSON (explicit/secondary) — see
+* A "What Happened?" story and numbered Reproduction Steps, built from
+  the core package's deterministic `IncidentAnalyzer` — no AI, no
+  invented causation — plus the original deterministic, pure-function
+  Bug Story generator for the fuller narrative.
+* Three report formats: a professional, self-contained HTML report
+  (default/primary), machine-readable JSON (explicit/secondary), and a
+  Markdown bug report ready to paste into an issue tracker — see
   "Report formats" below.
 * Zero new dependencies beyond `sensors_plus` and `share_plus`, both
   independently justified (see each's own pub.dev listing) — no `pdf`,
@@ -51,7 +54,7 @@ they saw.
 
 ```yaml
 dependencies:
-  flutter_flight_recorder_reporter: ^0.0.6
+  flutter_flight_recorder_reporter: ^0.0.7
 ```
 
 ## Quick start
@@ -241,12 +244,23 @@ duration recorded, the duration clause is omitted — nothing is invented.
 
 ## Report preview screen
 
-After an incident is created, the preview screen shows it in three
-card-like sections — header (incident ID, title, a color-coded severity
-badge), Bug Story, and the Attached checklist — with a brief (~350ms)
-fade + slide entrance, which respects the platform's reduce-motion
-setting (`MediaQuery.disableAnimations`) by skipping straight to the end
-state instead of animating.
+After an incident is created, the preview screen shows it in card-like
+sections, with a brief (~350ms) fade + slide entrance that respects the
+platform's reduce-motion setting (`MediaQuery.disableAnimations`) by
+skipping straight to the end state instead of animating:
+
+* **Header** — incident ID, title, a color-coded severity badge.
+* **What Happened?** — the core package's `IncidentAnalyzer` story: a
+  short, evidence-based summary of what led to the incident. See
+  [`flutter_flight_recorder`'s "Incident Intelligence"
+  section](../flutter_flight_recorder#incident-intelligence) for how
+  it's built and what it deliberately doesn't infer.
+* **Reproduction Steps** — a numbered list from the same analysis,
+  shown only when there's actually evidence for one (an incident with
+  nothing recorded shows no such card).
+* **Technical Narrative** — the original Bug Story (below), for anyone
+  who wants the fuller, sentence-per-event account.
+* **Attached** — the attachments checklist.
 
 ## Exporting JSON and sharing (Report formats)
 
@@ -256,19 +270,21 @@ state instead of animating.
      timeline below it. Save as docs/images/html-report-browser.gif. -->
 ![Scrolling through a generated HTML incident report in a browser, showing the severity-colored header and event timeline](https://raw.githubusercontent.com/AbuElmagd97/flutter_flight_recorder/main/docs/images/html-report-browser.gif)
 
-Two formats, both zero-dependency (no `pdf`/`printing` package, no new
-dependency of any kind — pure Dart string templating for HTML, and
-`dart:convert` for JSON, both already available):
+Three formats, all zero-dependency (no `pdf`/`printing` package, no new
+dependency of any kind — pure Dart string templating for HTML,
+`dart:convert` for JSON, and the core package's own
+`IncidentMarkdownExporter` for Markdown, all already available):
 
 * **HTML — the default, primary shareable format** (`Share Report`
   button). A single, self-contained HTML file: a severity-colored header
-  banner, incident ID/title/timestamp, QA report fields, a prominent
-  "Latest Error" callout when an error is present, a styled timeline
-  (one row per event, distinct color/icon per category, including
-  action/log metadata rendered as `key: value` pairs), the screenshot
-  embedded inline as a base64 `<img>` — no separate file, no external
-  reference — and a footer with `schema_version` and context. Opens
-  correctly in any browser or mail client preview with no extra
+  banner, incident ID/title/timestamp, the same "What Happened?" story
+  and Reproduction Steps shown in the preview screen, QA report fields,
+  a prominent "Latest Error" callout when an error is present, a styled
+  timeline (one row per event, distinct color/icon per category,
+  including action/log metadata rendered as `key: value` pairs), the
+  screenshot embedded inline as a base64 `<img>` — no separate file, no
+  external reference — and a footer with `schema_version` and context.
+  Opens correctly in any browser or mail client preview with no extra
   software.
 
   ```dart
@@ -287,7 +303,21 @@ dependency of any kind — pure Dart string templating for HTML, and
   programmatically. Still `incident.toJson()` (from the core package),
   still versioned via `schema_version`.
 
-Both formats are shared entirely in memory via `XFile.fromData` — no
+* **Markdown — for pasting into an issue tracker** (`Export Markdown`
+  button), via the core package's `IncidentMarkdownExporter`: a real
+  bug report (What happened, Reproduction steps, Technical evidence,
+  Network, Errors, Environment), not a dump of the `Incident` object —
+  see [`flutter_flight_recorder`'s "Exporting
+  Markdown"](../flutter_flight_recorder#exporting-markdown) for a full
+  example and what it deliberately leaves out. This package doesn't
+  reproduce that formatting logic; it just shares the exporter's
+  output.
+
+  ```dart
+  final markdown = IncidentMarkdownExporter.export(incident, analysis);
+  ```
+
+All three formats are shared entirely in memory via `XFile.fromData` — no
 `path_provider` dependency, no temp file written to disk. One thing
 worth calling out because it wasn't obvious going in: `XFile.fromData`'s
 own `name:` parameter is silently ignored by `cross_file` on every

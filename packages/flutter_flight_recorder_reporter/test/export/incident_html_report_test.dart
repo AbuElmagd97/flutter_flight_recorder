@@ -245,5 +245,62 @@ void main() {
       final html = IncidentHtmlReport.render(_incident());
       expect(html, contains('No events were recorded.'));
     });
+
+    test('includes a "What Happened?" card built from the recorded evidence', () {
+      final html = IncidentHtmlReport.render(
+        _incident(
+          timeline: [
+            _event(EventCategory.action, 'save_tapped'),
+            _event(
+              EventCategory.network,
+              'PATCH /profile',
+              metadata: const {
+                'method': 'PATCH',
+                'url': '/profile',
+                'statusCode': 422,
+              },
+            ),
+          ],
+        ),
+      );
+
+      expect(html, contains('What Happened?'));
+      expect(
+        html,
+        contains(
+          'After tapping &#39;save tapped&#39;, the PATCH /profile request returned HTTP 422.',
+        ),
+      );
+    });
+
+    test(
+      'includes numbered Reproduction Steps when there is evidence for them',
+      () {
+        final html = IncidentHtmlReport.render(
+          _incident(
+            timeline: [
+              _event(
+                EventCategory.navigation,
+                '/profile',
+                metadata: const {'action': 'push'},
+              ),
+              _event(EventCategory.action, 'save_tapped'),
+            ],
+          ),
+        );
+
+        expect(html, contains('Reproduction Steps'));
+        expect(html, contains('<li>Open profile</li>'));
+        expect(html, contains('<li>Tap &#39;save tapped&#39;</li>'));
+      },
+    );
+
+    test(
+      'omits the Reproduction Steps card when there is no evidence for any step',
+      () {
+        final html = IncidentHtmlReport.render(_incident());
+        expect(html, isNot(contains('Reproduction Steps')));
+      },
+    );
   });
 }

@@ -78,7 +78,7 @@ else you already use.
 
 ```yaml
 dependencies:
-  flutter_flight_recorder: ^0.0.6
+  flutter_flight_recorder: ^0.0.7
 ```
 
 ## Quick start
@@ -321,6 +321,84 @@ deliberately different from the void recording methods above: it can't
 safely no-op, since it has to return a value, so it fails loudly in
 every build mode rather than only asserting in debug.
 
+## Incident Intelligence
+
+`IncidentAnalyzer` turns an incident's raw, flat `timeline` into
+something a human can actually read in a few seconds — not just "here
+are some logs," but "here is the sequence of events that led to the
+incident":
+
+```dart
+final incident = FlightRecorder.createIncident(title: 'Profile save broken');
+final analysis = IncidentAnalyzer.analyze(incident);
+
+analysis.timeline;          // IncidentTimeline — normalized, log/lifecycle noise removed
+analysis.reproductionSteps; // List<ReproductionStep> — numbered, deterministic
+analysis.story;             // IncidentStory — a short, evidence-based summary
+```
+
+Call this when an incident is created or reported — it's not run on
+every recorded event, and it's not cached on `Incident` itself, so hold
+on to the `IncidentAnalysis` if you need it more than once.
+
+This is entirely local, deterministic, and offline: no network calls,
+no randomness, no AI. The same `Incident` always produces the same
+`IncidentAnalysis`, and every string it produces traces back to fields
+actually present on a recorded `FlightEvent` — nothing here is guessed.
+
+### How correlation works
+
+`FlightEvent` carries no explicit correlation/request ID linking, say,
+a button tap to the network request it triggered — the event model
+doesn't have one yet. In its absence, `IncidentAnalyzer` uses the only
+evidence that *is* available: chronological adjacency. Every `action`
+or `navigation` event opens a new causal-sequence chain; every
+`network` or `error` event that follows joins whichever chain is
+currently open — until the next `action`/`navigation` event opens a
+new one and closes the last. That means an unrelated action in between
+always prevents a false link:
+
+```text
+Tap Save -> PATCH /profile -> HTTP 422 -> ProfileUpdateException
+    (all one chain: the request and error follow Save directly)
+
+Tap Save -> unrelated GET /analytics/ping -> Tap Cancel -> PATCH /profile -> HTTP 422
+    (the failing PATCH is linked to Cancel, never to Save)
+```
+
+This is a heuristic, not a proof of causation — every result is phrased
+as a *sequence* ("after tapping Save, the request returned HTTP 422"),
+never as a causal claim ("tapping Save caused the failure"). If
+`FlightEvent` ever gains a real correlation ID, this is the one place
+that logic would change.
+
+### What it infers, and what it never does
+
+* **Reproduction steps** are the meaningful `action`/`navigation`
+  events in order, plus `network`/`error` events *only when they're
+  evidence of a failure* — a successful request is noise for
+  reproduction purposes and is left out. Consecutive duplicate steps
+  collapse into one.
+* **The story** states only what the evidence directly shows: an
+  action happened, a request returned a status code, an error was
+  recorded, in sequence. When there were multiple failures, it's about
+  the most recent one (consistent with `Incident.latestError`
+  elsewhere in this package). When there's nothing to report, it says
+  so explicitly (`"No error or failed network request was recorded
+  before this incident was created."`) rather than staying silent.
+* It never invents an event, a relationship, or a root cause that
+  wasn't recorded — see `IncidentAnalyzer`'s own class doc for the full
+  detail, including exactly which event categories are excluded as
+  noise (`log`, `lifecycle`) and why.
+
+### Privacy
+
+`IncidentAnalyzer` only ever reads `FlightEvent.metadata`, which is
+already sanitized by `Sanitizer` before an event enters the buffer (see
+[Privacy and Sanitization](#privacy-and-sanitization)) — there's no
+second privacy implementation here, and nothing masked can resurface
+unmasked in a timeline summary, reproduction step, or story.
+
 ## Exporting JSON
 
 ```dart
@@ -358,6 +436,83 @@ two representations of the same events drifting out of sync. If this
 ever needs to change — e.g. splitting `timeline` into per-category arrays
 in the wire format — that is a breaking change to the export shape and
 **must** bump `schema_version`, not be done in place.
+
+## Exporting Markdown
+
+Your QA team reports "profile save is broken." Instead of asking them
+what happened, share this:
+
+```dart
+final analysis = IncidentAnalyzer.analyze(incident);
+final markdown = IncidentMarkdownExporter.export(incident, analysis);
+```
+
+`markdown` is a single Markdown document ready to paste directly into
+Jira, Linear, GitHub Issues, Slack, or email — a real bug report, not a
+debug dump. It's a pure formatter over `incident` (title, QA report,
+context, metadata — the original report) and `analysis` (story,
+reproduction steps, timeline — the interpreted evidence); it never
+re-analyzes events, infers anything, or generates its own story —
+[`analysis`](#incident-intelligence) already did that. Sections appear
+in scan order — what happened, then reproduction steps, then technical
+evidence, then environment/metadata last — and a section that has
+nothing to show (no QA report, no network activity, no errors) is
+omitted entirely, not rendered as an empty placeholder.
+
+Example output for a failed profile update:
+
+````markdown
+# Profile update failed
+
+## What happened?
+
+After tapping 'save tapped', the PATCH /profile request returned HTTP 422, followed by ProfileUpdateException.
+
+## Reproduction steps
+
+1. Open profile
+2. Open profile/edit
+3. Tap 'save tapped'
+4. PATCH /profile request returned HTTP 422
+5. ProfileUpdateException occurred
+
+## Technical evidence
+
+| Time | Event |
+|---|---|
+| 14:32:10 | Opened profile |
+| 14:32:21 | Tapped 'save tapped' |
+| 14:32:21 | PATCH /profile → HTTP 422 |
+| 14:32:22 | ProfileUpdateException occurred |
+
+## Network
+
+- PATCH /profile
+  - Status: 422
+  - Duration: 842ms
+
+## Errors
+
+- ProfileUpdateException
+
+## Incident
+
+- Incident ID: INC-7F8A2D
+- Reported: 2026-01-01T14:32:24.000Z
+````
+
+Like `IncidentAnalyzer`, this is deterministic and offline — the same
+`Incident`/`IncidentAnalysis` pair always produces byte-identical
+Markdown, which is also what makes it a stable foundation for future,
+format-specific exporters (a Jira payload builder, say) to consume the
+same `IncidentAnalysis` without duplicating this formatting logic.
+
+Values that could break Markdown syntax — `|`, `` ` ``, `*`, a literal
+backslash, an embedded newline — are escaped or collapsed to a single
+line; nothing here masks or unmasks anything for privacy, since every
+value read from `Incident.timeline` was already sanitized by
+`Sanitizer` before it was recorded (see
+[Privacy and Sanitization](#privacy-and-sanitization)).
 
 ## Platform Support
 
@@ -402,6 +557,17 @@ explicit limitation that masking is key-name-based, not content-based.
   "Exporting JSON") — splitting it would be a breaking, versioned change,
   not a small addition.
 * Only a macOS build has actually been run — see "Platform Support."
+* `IncidentAnalyzer`'s correlation is a chronological-adjacency
+  heuristic, not a proof of causation — see "Incident Intelligence" for
+  what that means in practice, and why an unrelated action in between
+  two events can never falsely link them.
+* `IncidentMarkdownExporter`'s "Environment" section is only whatever
+  `incident.context` happens to hold — there's no dedicated OS version/
+  device model/session ID field, since core doesn't auto-capture them
+  (see "Application context"). It renders generic Markdown, not a
+  Jira/Linear/GitHub-specific payload; a tracker-specific exporter would
+  be a separate, new addition built on the same `IncidentAnalysis`, not
+  a change to this one.
 
 ## Roadmap
 

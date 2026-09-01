@@ -5,6 +5,23 @@
   bitten us before.
 -->
 
+## 0.0.7
+
+* `ReportPreviewScreen` now shows a "What Happened?" card and, when
+  there's evidence for one, a numbered "Reproduction Steps" card —
+  both built from the core package's new `IncidentAnalyzer`. The
+  existing Bug Story narrative is still shown, now under "Technical
+  Narrative".
+* `IncidentHtmlReport` (the shared HTML export) renders the same "What
+  Happened?" and "Reproduction Steps" sections, so the exported report
+  matches what's shown in the app.
+* Bumped the `flutter_flight_recorder` dependency constraint
+  (`^0.0.7`) to track that package's new `IncidentAnalyzer` release.
+* Added an "Export Markdown" action to the report preview screen and
+  `ReportShare.shareMarkdown` — shares the core package's new
+  `IncidentMarkdownExporter` output as a `.md` file, alongside the
+  existing HTML/JSON exports.
+
 ## 0.0.6
 
 Docs-only patch — no changes to `lib/` or `test/`.

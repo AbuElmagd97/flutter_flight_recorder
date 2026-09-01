@@ -145,4 +145,58 @@ void main() {
       );
     });
   });
+
+  group('ReportShare.shareMarkdown', () {
+    test(
+      'shares a single Markdown file with the right name and mime type',
+      () async {
+        final platform = _FakeSharePlatform.succeeds();
+        final incident = _incident();
+        final analysis = IncidentAnalyzer.analyze(incident);
+        await ReportShare.shareMarkdown(
+          incident,
+          analysis,
+          sharePlus: SharePlus.custom(platform),
+        );
+
+        final params = platform.lastParams!;
+        expect(params.files, hasLength(1));
+        expect(params.fileNameOverrides, ['INC-ABCDEF.md']);
+        expect(params.files!.single.mimeType, 'text/markdown');
+        expect(params.subject, 'Profile update failed');
+      },
+    );
+
+    test('the shared bytes are exactly IncidentMarkdownExporter.export for the '
+        'same incident/analysis pair — no separate formatting path', () async {
+      final platform = _FakeSharePlatform.succeeds();
+      final incident = _incident();
+      final analysis = IncidentAnalyzer.analyze(incident);
+      await ReportShare.shareMarkdown(
+        incident,
+        analysis,
+        sharePlus: SharePlus.custom(platform),
+      );
+
+      final bytes = await platform.lastParams!.files!.single.readAsBytes();
+      expect(
+        utf8.decode(bytes),
+        IncidentMarkdownExporter.export(incident, analysis),
+      );
+    });
+
+    test('propagates a share failure rather than swallowing it', () async {
+      final platform = _FakeSharePlatform.fails(Exception('unavailable'));
+      final incident = _incident();
+
+      await expectLater(
+        ReportShare.shareMarkdown(
+          incident,
+          IncidentAnalyzer.analyze(incident),
+          sharePlus: SharePlus.custom(platform),
+        ),
+        throwsA(isA<Exception>()),
+      );
+    });
+  });
 }

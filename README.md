@@ -25,6 +25,71 @@ New to this package? Start with [WALKTHROUGH.md](WALKTHROUGH.md) — from zero t
 
 **Status:** All three packages are published on pub.dev.
 
+## Incident Intelligence
+
+Your QA team reports:
+
+> "Profile save is broken."
+
+`flutter_flight_recorder` can show:
+
+**What happened:**
+Profile update failed after the user edited their phone number and
+tapped Save.
+
+**Reproduction:**
+1. Open Profile
+2. Open Edit Profile
+3. Change phone number
+4. Tap Save
+5. `PATCH /profile` request returned HTTP 422
+
+**Evidence:**
+`PATCH /profile → HTTP 422`, followed by `ProfileUpdateException`.
+
+That's the recorder's `IncidentAnalyzer` — a small, deterministic,
+offline analysis pipeline (no AI, no network calls) that turns an
+incident's raw recorded events into a normalized timeline, an inferred
+reproduction sequence, and a short evidence-based story:
+
+```dart
+final incident = FlightRecorder.createIncident(title: 'Profile save broken');
+final analysis = IncidentAnalyzer.analyze(incident);
+
+analysis.story;             // IncidentStory — 1–2 sentences, evidence only
+analysis.reproductionSteps; // List<ReproductionStep> — numbered, deterministic
+analysis.timeline;          // IncidentTimeline — normalized, noise filtered out
+```
+
+**What it infers:** the sequence of user actions, navigation, and
+network/error events leading to the incident, and which of them are
+plausibly related (same causal chain) based on chronological adjacency.
+
+**What it intentionally never infers:** *why* something failed. It will
+say a request "returned HTTP 422" — never guess that "the backend
+rejected an invalid phone number" unless that's actually in the
+recorded evidence. See `IncidentAnalyzer`'s class doc in the core
+package for exactly how correlation works and its documented limits
+(no request/correlation IDs yet — it's a chronological-adjacency
+heuristic, not a proof of causation).
+
+Full details, including every edge case the analyzer is tested
+against, live in
+[`flutter_flight_recorder`'s own README](packages/flutter_flight_recorder#incident-intelligence).
+
+Turn that same evidence into a bug report your team can actually paste
+somewhere — Jira, Linear, GitHub Issues, Slack, email:
+
+```dart
+final markdown = IncidentMarkdownExporter.export(incident, analysis);
+```
+
+A pure Markdown formatter over `incident` + `analysis` — no new
+analysis, no invented conclusions, deterministic. See
+[`flutter_flight_recorder`'s "Exporting
+Markdown"](packages/flutter_flight_recorder#exporting-markdown) for a
+full example report and what it deliberately leaves out.
+
 ## Which package do you need?
 
 | I want to...                                  | Install this |
@@ -41,9 +106,9 @@ Full setup, all three packages together:
 
 ```yaml
 dependencies:
-  flutter_flight_recorder: ^0.0.6
-  flutter_flight_recorder_dio: ^0.0.6
-  flutter_flight_recorder_reporter: ^0.0.6
+  flutter_flight_recorder: ^0.0.7
+  flutter_flight_recorder_dio: ^0.0.7
+  flutter_flight_recorder_reporter: ^0.0.7
 ```
 
 ```dart

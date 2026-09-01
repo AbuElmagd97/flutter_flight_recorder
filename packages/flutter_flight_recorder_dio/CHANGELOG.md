@@ -5,6 +5,18 @@
   bitten us before.
 -->
 
+## 0.0.7
+
+* Added `flightRecorderCorrelationIdKey`: set it on a request's
+  `RequestOptions.extra` to explicitly correlate that request with
+  other recorded events (e.g. the action that triggered it) — the
+  interceptor reads it and threads it through to the core package's
+  new `FlightEvent.correlationId`. Optional and purely additive; a
+  request with no such key records exactly as it always has. Explicit,
+  per-request only — no ambient/Zone-based propagation.
+* Bumped the `flutter_flight_recorder` dependency constraint
+  (`^0.0.7`) to track that package's new `IncidentAnalyzer` release.
+
 ## 0.0.6
 
 Docs-only patch — no changes to `lib/` or `test/`. Fixed a stale

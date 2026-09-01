@@ -7,8 +7,14 @@ RequestOptions _options({
   String method = 'GET',
   String url = 'https://api.example.com/profile',
   Object? data,
+  Map<String, Object?> extra = const {},
 }) {
-  return RequestOptions(path: url, method: method, data: data);
+  return RequestOptions(
+    path: url,
+    method: method,
+    data: data,
+    extra: Map<String, Object?>.of(extra),
+  );
 }
 
 /// [ErrorInterceptorHandler.next] completes its internal future with the
@@ -277,6 +283,114 @@ void main() {
         FlightRecorder.debugEvents.single.metadata['url'],
         'https://api.example.com/profile',
       );
+    });
+  });
+
+  group('explicit correlation', () {
+    test(
+      'a correlationId set via flightRecorderCorrelationIdKey is threaded '
+      'onto the recorded network event',
+      () {
+        final interceptor = FlightRecorderDioInterceptor();
+        final options = _options(
+          extra: {flightRecorderCorrelationIdKey: 'COR-A'},
+        );
+        interceptor.onRequest(options, RequestInterceptorHandler());
+
+        final response =
+            Response<dynamic>(requestOptions: options, statusCode: 200);
+        interceptor.onResponse(response, ResponseInterceptorHandler());
+
+        expect(FlightRecorder.debugEvents.single.correlationId, 'COR-A');
+      },
+    );
+
+    test(
+      'a request with no correlationId key records exactly as before — '
+      'correlationId is null, additive only',
+      () {
+        final interceptor = FlightRecorderDioInterceptor();
+        final options = _options();
+        interceptor.onRequest(options, RequestInterceptorHandler());
+
+        final response =
+            Response<dynamic>(requestOptions: options, statusCode: 200);
+        interceptor.onResponse(response, ResponseInterceptorHandler());
+
+        expect(FlightRecorder.debugEvents.single.correlationId, isNull);
+      },
+    );
+
+    test('a correlationId is also threaded through on a failed request',
+        () async {
+      final interceptor = FlightRecorderDioInterceptor();
+      final options = _options(
+        method: 'PATCH',
+        extra: {flightRecorderCorrelationIdKey: 'COR-A'},
+      );
+      interceptor.onRequest(options, RequestInterceptorHandler());
+
+      final response =
+          Response<dynamic>(requestOptions: options, statusCode: 422);
+      final error = DioException(
+        requestOptions: options,
+        response: response,
+        type: DioExceptionType.badResponse,
+      );
+      await _fireError(interceptor, error);
+
+      expect(FlightRecorder.debugEvents.single.correlationId, 'COR-A');
+    });
+
+    test(
+      'two concurrent requests carrying different correlationIds are never '
+      'confused with each other',
+      () {
+        final interceptor = FlightRecorderDioInterceptor();
+        final optionsA = _options(
+          url: 'https://api.example.com/a',
+          extra: {flightRecorderCorrelationIdKey: 'COR-A'},
+        );
+        final optionsB = _options(
+          url: 'https://api.example.com/b',
+          extra: {flightRecorderCorrelationIdKey: 'COR-B'},
+        );
+        interceptor.onRequest(optionsA, RequestInterceptorHandler());
+        interceptor.onRequest(optionsB, RequestInterceptorHandler());
+
+        // B's response lands first — proves correlation is carried on
+        // each request's own extras, not on any interceptor-level state
+        // that could be clobbered by request order.
+        interceptor.onResponse(
+          Response<dynamic>(requestOptions: optionsB, statusCode: 200),
+          ResponseInterceptorHandler(),
+        );
+        interceptor.onResponse(
+          Response<dynamic>(requestOptions: optionsA, statusCode: 200),
+          ResponseInterceptorHandler(),
+        );
+
+        final byUrl = {
+          for (final e in FlightRecorder.debugEvents)
+            e.metadata['url']: e.correlationId,
+        };
+        expect(byUrl['https://api.example.com/a'], 'COR-A');
+        expect(byUrl['https://api.example.com/b'], 'COR-B');
+      },
+    );
+
+    test('a non-String value under the key is ignored, not passed through', () {
+      final interceptor = FlightRecorderDioInterceptor();
+      final options = _options(
+        extra: {flightRecorderCorrelationIdKey: 12345},
+      );
+      interceptor.onRequest(options, RequestInterceptorHandler());
+
+      final response =
+          Response<dynamic>(requestOptions: options, statusCode: 200);
+      interceptor.onResponse(response, ResponseInterceptorHandler());
+
+      expect(FlightRecorder.debugEvents.single.correlationId, isNull);
     });
   });
 

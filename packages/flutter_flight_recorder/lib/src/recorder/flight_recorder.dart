@@ -13,7 +13,14 @@ import 'rolling_buffer.dart';
 
 export '../config/flight_recorder_config.dart';
 export '../events/flight_event.dart';
+export '../incident/analysis/incident_analysis.dart';
+export '../incident/analysis/incident_analyzer.dart';
+export '../incident/analysis/incident_story.dart';
+export '../incident/analysis/incident_timeline.dart';
+export '../incident/analysis/reproduction_step.dart';
+export '../incident/analysis/timeline_entry.dart';
 export '../incident/incident.dart';
+export '../incident/incident_markdown_exporter.dart';
 export '../incident/qa_report_data.dart';
 export '../lifecycle/flight_recorder_lifecycle_observer.dart';
 export '../navigation/flight_recorder_navigator_observer.dart'
@@ -70,28 +77,48 @@ class FlightRecorder {
   }
 
   /// Records a user action, e.g. `FlightRecorder.recordAction('save_profile_tapped')`.
-  static void recordAction(String name, {Map<String, Object?>? metadata}) {
-    _record(EventCategory.action, name, metadata: metadata);
+  ///
+  /// [correlationId] optionally declares that this event belongs to the
+  /// same application-defined interaction as every other recorded event
+  /// passed the same id — see [newCorrelationId] and
+  /// `FlightEvent.correlationId` for what that does and does not mean.
+  /// Omit it (the default) to keep today's behavior exactly: an
+  /// uncorrelated event, grouped by `IncidentAnalyzer`'s chronological
+  /// fallback like every event recorded before this parameter existed.
+  static void recordAction(
+    String name, {
+    Map<String, Object?>? metadata,
+    String? correlationId,
+  }) {
+    _record(EventCategory.action, name,
+        metadata: metadata, correlationId: correlationId);
   }
 
   /// Records a structured log line. Logs become timeline events; this does
   /// not replace or hook into an application's existing logging framework.
+  ///
+  /// See [recordAction] for what [correlationId] does.
   static void log(
     String message, {
     EventSeverity level = EventSeverity.info,
     Map<String, Object?>? metadata,
+    String? correlationId,
   }) {
-    _record(EventCategory.log, message, metadata: metadata, severity: level);
+    _record(EventCategory.log, message,
+        metadata: metadata, severity: level, correlationId: correlationId);
   }
 
   /// Manually records an error. See [init] and
   /// [FlightRecorderConfig.captureUncaughtErrors] for automatic capture of
   /// uncaught errors — that's installed by [init], not by this method.
+  ///
+  /// See [recordAction] for what [correlationId] does.
   static void recordError(
     Object error, {
     StackTrace? stackTrace,
     Map<String, Object?>? metadata,
     EventSeverity severity = EventSeverity.error,
+    String? correlationId,
   }) {
     final combinedMetadata = <String, Object?>{
       'error': error.toString(),
@@ -103,6 +130,7 @@ class FlightRecorder {
       error.runtimeType.toString(),
       metadata: combinedMetadata,
       severity: severity,
+      correlationId: correlationId,
     );
   }
 
@@ -116,10 +144,13 @@ class FlightRecorder {
   /// Records a navigation transition. Normally called by
   /// `FlightRecorderNavigatorObserver`, not directly by application code.
   /// Only route names are ever recorded — never route arguments.
+  ///
+  /// See [recordAction] for what [correlationId] does.
   static void recordNavigation(
     String routeName, {
     String? previousRouteName,
     required String action,
+    String? correlationId,
   }) {
     _record(
       EventCategory.navigation,
@@ -128,6 +159,7 @@ class FlightRecorder {
         'action': action,
         if (previousRouteName != null) 'from': previousRouteName,
       },
+      correlationId: correlationId,
     );
   }
 
@@ -136,20 +168,30 @@ class FlightRecorder {
   /// package), not directly by application code. `metadata` is expected
   /// to carry the sanitized URL, status code, duration, and error type —
   /// the interceptor is responsible for that shape, not this method.
+  ///
+  /// See [recordAction] for what [correlationId] does — the interceptor
+  /// passes one through here when the request carried an explicit one
+  /// (see that package's own docs for how).
   static void recordNetwork(
     String name, {
     Map<String, Object?>? metadata,
     EventSeverity? severity,
+    String? correlationId,
   }) {
     _record(EventCategory.network, name,
-        metadata: metadata, severity: severity);
+        metadata: metadata, severity: severity, correlationId: correlationId);
   }
 
   /// Records an application lifecycle transition (e.g. `'resumed'`,
   /// `'paused'`). Normally called by `FlightRecorderLifecycleObserver`,
   /// not directly by application code.
-  static void recordLifecycle(String state, {Map<String, Object?>? metadata}) {
-    _record(EventCategory.lifecycle, state, metadata: metadata);
+  static void recordLifecycle(
+    String state, {
+    Map<String, Object?>? metadata,
+    String? correlationId,
+  }) {
+    _record(EventCategory.lifecycle, state,
+        metadata: metadata, correlationId: correlationId);
   }
 
   /// Creates an immutable [Incident] snapshotting the current timeline and
@@ -187,15 +229,35 @@ class FlightRecorder {
     );
   }
 
-  static final Random _incidentIdRandom = Random.secure();
+  /// Generates a fresh, opaque correlation id for use with the
+  /// `correlationId` parameter on [recordAction] and the other `record*`
+  /// methods — e.g. one call per user interaction you want explicitly
+  /// correlated, passed to every event recorded as part of it:
+  ///
+  /// ```dart
+  /// final id = FlightRecorder.newCorrelationId();
+  /// FlightRecorder.recordAction('save_tapped', correlationId: id);
+  /// // ... pass `id` through to whatever records the resulting request.
+  /// ```
+  ///
+  /// Random and unrelated to any application data — treat it as an
+  /// opaque token. Unlike `metadata`, `correlationId` is never subject
+  /// to `Sanitizer`'s masking (see `FlightEvent.correlationId`'s doc),
+  /// so never pass an email, phone number, user id, token, URL, or any
+  /// other sensitive/business value here — only ids from this method,
+  /// or values you already know are equally opaque.
+  static String newCorrelationId() => 'COR-${_randomHex(6)}';
 
-  static String _generateIncidentId() {
-    final bytes = List<int>.generate(3, (_) => _incidentIdRandom.nextInt(256));
-    final hex = bytes
+  static final Random _idRandom = Random.secure();
+
+  static String _generateIncidentId() => 'INC-${_randomHex(3)}';
+
+  static String _randomHex(int byteLength) {
+    final bytes = List<int>.generate(byteLength, (_) => _idRandom.nextInt(256));
+    return bytes
         .map((b) => b.toRadixString(16).padLeft(2, '0'))
         .join()
         .toUpperCase();
-    return 'INC-$hex';
   }
 
   /// Resets all recorder state, including restoring [FlutterError.onError]
@@ -226,6 +288,7 @@ class FlightRecorder {
     String name, {
     Map<String, Object?>? metadata,
     EventSeverity? severity,
+    String? correlationId,
   }) {
     if (!_requireInitialized('record')) return;
     final session = _session!;
@@ -240,6 +303,7 @@ class FlightRecorder {
       name: name,
       metadata: session.sanitizer.sanitizeMetadata(metadata ?? const {}),
       severity: severity,
+      correlationId: correlationId,
     );
     session.buffer.add(event);
   }

@@ -5,6 +5,37 @@
   bitten us before.
 -->
 
+## 0.0.7
+
+* Added `IncidentAnalyzer`: a deterministic, offline analysis pipeline
+  that turns an `Incident`'s raw event timeline into a normalized
+  `IncidentTimeline`, an inferred `List<ReproductionStep>`, and a short,
+  evidence-based `IncidentStory`. New types: `IncidentAnalysis`,
+  `IncidentAnalyzer`, `IncidentTimeline`, `TimelineEntry`,
+  `ReproductionStep`, `IncidentStory`. See `IncidentAnalyzer`'s class doc
+  for exactly how event correlation works and its documented limits.
+* Added `IncidentMarkdownExporter`: renders an `Incident` and its
+  `IncidentAnalysis` as a single Markdown bug report — meant to be
+  pasted directly into Jira, Linear, GitHub Issues, Slack, or email. A
+  pure formatter over already-analyzed data (it never analyzes events
+  itself); sections it can produce are What happened, QA report,
+  Reproduction steps, Technical evidence, Network, Errors, Environment,
+  and Incident metadata, each omitted entirely when there's nothing to
+  show for it. Deterministic, no new dependency.
+* Added `FlightEvent.correlationId`: an optional, opaque token an
+  application can explicitly attach to two or more events (via a new
+  `correlationId` parameter on `recordAction`, `log`, `recordError`,
+  `recordNavigation`, `recordNetwork`, and `recordLifecycle`) to declare
+  they belong to the same interaction — states association, never
+  causation. `IncidentAnalyzer` now prefers this explicit grouping when
+  two or more surviving events share a usable id, falling back to its
+  original chronological heuristic for everything else — fully
+  backward compatible; every event recorded without a `correlationId`
+  behaves exactly as before. Added `FlightRecorder.newCorrelationId()`
+  to generate one. No Zones, no ambient/automatic propagation yet — see
+  `IncidentAnalyzer`'s class doc for exactly how the two strategies
+  interact.
+
 ## 0.0.6
 
 Docs-only patch — no changes to `lib/` or `test/`.

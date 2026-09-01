@@ -33,12 +33,20 @@ const Map<EventCategory, String> _categoryEmoji = {
 /// `FlightRecorder`/`Sanitizer` in the core package). This renderer
 /// never sees raw unsanitized data and never re-sanitizes anything; it
 /// only HTML-escapes values for safe rendering.
+///
+/// Alongside the raw event timeline, this also renders the "What
+/// Happened?" story and "Reproduction Steps" produced by
+/// `IncidentAnalyzer` — the same deterministic, evidence-based analysis
+/// `ReportPreviewScreen` shows in the app, so both surfaces stay
+/// consistent without duplicating any correlation/summarization logic
+/// here.
 class IncidentHtmlReport {
   const IncidentHtmlReport._();
 
   static String render(Incident incident, {Uint8List? screenshot}) {
     final severity = incident.qaReport?.severity;
     final error = incident.latestError;
+    final analysis = IncidentAnalyzer.analyze(incident);
 
     final buffer = StringBuffer()
       ..writeln('<!DOCTYPE html>')
@@ -56,6 +64,8 @@ class IncidentHtmlReport {
       ..writeln('<body>')
       ..writeln('<div class="container">')
       ..writeln(_renderHeader(incident, severity))
+      ..writeln(_renderStory(analysis))
+      ..writeln(_renderReproductionSteps(analysis))
       ..writeln(_renderQaReport(incident))
       ..writeln(_renderErrorCallout(error))
       ..writeln(_renderScreenshot(screenshot))
@@ -66,6 +76,20 @@ class IncidentHtmlReport {
       ..writeln('</html>');
 
     return buffer.toString();
+  }
+
+  static String _renderStory(IncidentAnalysis analysis) {
+    return '<div class="card"><h2>What Happened?</h2>'
+        '<div class="value">${_escape(analysis.story.summary)}</div></div>';
+  }
+
+  static String _renderReproductionSteps(IncidentAnalysis analysis) {
+    if (analysis.reproductionSteps.isEmpty) return '';
+    final items = analysis.reproductionSteps
+        .map((step) => '<li>${_escape(step.description)}</li>')
+        .join();
+    return '<div class="card"><h2>Reproduction Steps</h2>'
+        '<ol class="repro-steps">$items</ol></div>';
   }
 
   static String _renderHeader(Incident incident, IncidentSeverity? severity) {
@@ -227,6 +251,8 @@ body {
   margin: 0 0 12px; font-size: 13px; text-transform: uppercase;
   letter-spacing: 0.05em; color: #666;
 }
+.repro-steps { margin: 0; padding-left: 20px; font-size: 14px; }
+.repro-steps li { margin-bottom: 6px; }
 .field { margin-bottom: 12px; }
 .field:last-child { margin-bottom: 0; }
 .field .label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }

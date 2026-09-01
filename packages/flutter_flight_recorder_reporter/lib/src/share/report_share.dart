@@ -71,4 +71,27 @@ class ReportShare {
       ),
     );
   }
+
+  /// Shares a Markdown bug report — for pasting directly into Jira,
+  /// Linear, GitHub Issues, Slack, or email. See
+  /// [IncidentMarkdownExporter.export] (core package); [analysis] should
+  /// be the same [IncidentAnalysis] already computed for the preview
+  /// screen, not recomputed here.
+  static Future<ShareResult> shareMarkdown(
+    Incident incident,
+    IncidentAnalysis analysis, {
+    SharePlus? sharePlus,
+  }) async {
+    final markdownBytes = Uint8List.fromList(
+      utf8.encode(IncidentMarkdownExporter.export(incident, analysis)),
+    );
+
+    return (sharePlus ?? SharePlus.instance).share(
+      ShareParams(
+        files: [XFile.fromData(markdownBytes, mimeType: 'text/markdown')],
+        fileNameOverrides: ['${incident.id}.md'],
+        subject: incident.title,
+      ),
+    );
+  }
 }

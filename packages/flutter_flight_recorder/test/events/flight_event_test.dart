@@ -80,5 +80,63 @@ void main() {
         'severity': 'error',
       });
     });
+
+    test('correlationId is null by default and omitted from toJson', () {
+      final event = FlightEvent(
+        id: 'evt-1',
+        timestamp: DateTime.now(),
+        category: EventCategory.action,
+        name: 'save_tapped',
+      );
+
+      expect(event.correlationId, isNull);
+      expect(event.toJson().containsKey('correlation_id'), isFalse);
+    });
+
+    test('correlationId is stored and included in toJson when set', () {
+      final event = FlightEvent(
+        id: 'evt-1',
+        timestamp: DateTime.now(),
+        category: EventCategory.action,
+        name: 'save_tapped',
+        correlationId: 'COR-ABCDEF',
+      );
+
+      expect(event.correlationId, 'COR-ABCDEF');
+      expect(event.toJson()['correlation_id'], 'COR-ABCDEF');
+    });
+
+    test(
+      'correlationId is separate from metadata — never merged into it',
+      () {
+        final event = FlightEvent(
+          id: 'evt-1',
+          timestamp: DateTime.now(),
+          category: EventCategory.action,
+          name: 'save_tapped',
+          metadata: const {'screen': 'edit_profile'},
+          correlationId: 'COR-ABCDEF',
+        );
+
+        expect(event.metadata, {'screen': 'edit_profile'});
+        expect(event.metadata.containsKey('correlationId'), isFalse);
+        expect(event.metadata.containsKey('correlation_id'), isFalse);
+      },
+    );
+
+    test(
+        'an oversized correlationId is truncated, same as any other recorded string',
+        () {
+      final oversized = 'x' * 3000;
+      final event = FlightEvent(
+        id: 'evt-1',
+        timestamp: DateTime.now(),
+        category: EventCategory.action,
+        name: 'save_tapped',
+        correlationId: oversized,
+      );
+
+      expect(event.correlationId!.length, lessThan(oversized.length));
+    });
   });
 }

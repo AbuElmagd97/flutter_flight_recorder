@@ -3,6 +3,26 @@ import 'package:flutter_flight_recorder/flutter_flight_recorder.dart';
 
 const String _startTimeExtraKey = '_flutter_flight_recorder_start_time';
 
+/// The [RequestOptions.extra] key this interceptor reads to explicitly
+/// correlate a request with other recorded events — e.g. the user action
+/// that triggered it. Set it on the request you want correlated:
+///
+/// ```dart
+/// final id = FlightRecorder.newCorrelationId();
+/// FlightRecorder.recordAction('save_tapped', correlationId: id);
+/// await dio.patch(
+///   '/profile',
+///   options: Options(extra: {flightRecorderCorrelationIdKey: id}),
+/// );
+/// ```
+///
+/// Optional and purely additive — a request with no such key recorded
+/// exactly as it always has, with `correlationId: null`. This is
+/// explicit, per-request propagation only: nothing here reads ambient
+/// state or infers a correlation id that wasn't set on the request
+/// itself.
+const String flightRecorderCorrelationIdKey = 'flightRecorderCorrelationId';
+
 /// Records Dio HTTP requests into the flight recorder timeline.
 ///
 /// ```dart
@@ -89,6 +109,7 @@ class FlightRecorderDioInterceptor extends Interceptor {
     final durationMs = startTime is DateTime
         ? DateTime.now().difference(startTime).inMilliseconds
         : null;
+    final correlationId = options.extra[flightRecorderCorrelationIdKey];
 
     FlightRecorder.recordNetwork(
       '${options.method} ${options.uri.path}',
@@ -103,6 +124,7 @@ class FlightRecorderDioInterceptor extends Interceptor {
         if (captureResponseBody && responseData != null)
           'responseBody': responseData,
       },
+      correlationId: correlationId is String ? correlationId : null,
     );
   }
 

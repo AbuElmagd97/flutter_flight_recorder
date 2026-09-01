@@ -9,12 +9,21 @@ import '../story/bug_story_generator.dart';
 import 'severity_badge.dart';
 
 const Key bugStoryTextKey = Key('flutter_flight_recorder_reporter_bug_story');
+const Key incidentStoryTextKey = Key(
+  'flutter_flight_recorder_reporter_incident_story',
+);
+const Key reproductionStepsKey = Key(
+  'flutter_flight_recorder_reporter_reproduction_steps',
+);
 const Key copySummaryButtonKey = Key(
   'flutter_flight_recorder_reporter_copy_summary_button',
 );
 const Key shareButtonKey = Key('flutter_flight_recorder_reporter_share_button');
 const Key exportJsonButtonKey = Key(
   'flutter_flight_recorder_reporter_export_json_button',
+);
+const Key exportMarkdownButtonKey = Key(
+  'flutter_flight_recorder_reporter_export_markdown_button',
 );
 const Key closePreviewButtonKey = Key(
   'flutter_flight_recorder_reporter_close_preview_button',
@@ -96,6 +105,7 @@ class _ReportPreviewScreenState extends State<ReportPreviewScreen>
   @override
   Widget build(BuildContext context) {
     final story = BugStoryGenerator.generate(widget.incident);
+    final analysis = IncidentAnalyzer.analyze(widget.incident);
     final severity = widget.incident.qaReport?.severity;
 
     return Scaffold(
@@ -141,7 +151,36 @@ class _ReportPreviewScreenState extends State<ReportPreviewScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const _CardHeading('Bug Story'),
+                      const _CardHeading('What Happened?'),
+                      const SizedBox(height: 4),
+                      Text(analysis.story.summary, key: incidentStoryTextKey),
+                    ],
+                  ),
+                ),
+                if (analysis.reproductionSteps.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  _ReportCard(
+                    child: Column(
+                      key: reproductionStepsKey,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const _CardHeading('Reproduction Steps'),
+                        const SizedBox(height: 4),
+                        for (final step in analysis.reproductionSteps)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text('${step.index}. ${step.description}'),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 12),
+                _ReportCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const _CardHeading('Technical Narrative'),
                       const SizedBox(height: 4),
                       Text(story, key: bugStoryTextKey),
                     ],
@@ -188,6 +227,14 @@ class _ReportPreviewScreenState extends State<ReportPreviewScreen>
                         key: exportJsonButtonKey,
                         onPressed: _busy ? null : _exportJson,
                         child: const Text('Export JSON'),
+                      ),
+                      const SizedBox(height: 8),
+                      OutlinedButton(
+                        key: exportMarkdownButtonKey,
+                        onPressed: _busy
+                            ? null
+                            : () => _exportMarkdown(analysis),
+                        child: const Text('Export Markdown'),
                       ),
                       const SizedBox(height: 8),
                       OutlinedButton(
@@ -250,6 +297,28 @@ class _ReportPreviewScreenState extends State<ReportPreviewScreen>
       setState(() {
         _busy = false;
         _actionError = 'Could not export JSON: $e';
+      });
+    }
+  }
+
+  Future<void> _exportMarkdown(IncidentAnalysis analysis) async {
+    setState(() {
+      _actionError = null;
+      _busy = true;
+    });
+    try {
+      await ReportShare.shareMarkdown(
+        widget.incident,
+        analysis,
+        sharePlus: widget.sharePlus,
+      );
+      if (!mounted) return;
+      setState(() => _busy = false);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _busy = false;
+        _actionError = 'Could not export Markdown: $e';
       });
     }
   }

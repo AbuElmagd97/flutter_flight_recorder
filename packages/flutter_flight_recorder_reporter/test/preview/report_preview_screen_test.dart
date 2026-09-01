@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_flight_recorder/flutter_flight_recorder.dart';
@@ -23,13 +25,16 @@ class _FakeSharePlatform extends SharePlatform {
   }
 }
 
-Incident _incident({IncidentSeverity? severity = IncidentSeverity.high}) {
+Incident _incident({
+  IncidentSeverity? severity = IncidentSeverity.high,
+  List<FlightEvent> timeline = const [],
+}) {
   return Incident(
     id: 'INC-ABCDEF',
     timestamp: DateTime.utc(2026, 1, 1),
     title: 'Profile update failed',
     qaReport: severity == null ? null : QaReportData(severity: severity),
-    timeline: const [],
+    timeline: timeline,
     context: const {},
   );
 }
@@ -68,6 +73,81 @@ void main() {
       expect(find.text('HIGH'), findsOneWidget);
       expect(find.byKey(bugStoryTextKey), findsOneWidget);
     });
+
+    testWidgets(
+      'shows a "What Happened?" story and no Reproduction Steps card for an empty timeline',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            ReportPreviewScreen(
+              incident: _incident(),
+              screenshot: null,
+              onClose: () {},
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(incidentStoryTextKey), findsOneWidget);
+        expect(
+          find.text('No events were recorded before this incident.'),
+          findsWidgets,
+        );
+        expect(find.byKey(reproductionStepsKey), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'shows numbered Reproduction Steps derived from the incident timeline',
+      (tester) async {
+        final now = DateTime.utc(2026, 1, 1, 12);
+        final timeline = [
+          FlightEvent(
+            id: '1',
+            timestamp: now,
+            category: EventCategory.navigation,
+            name: '/profile',
+            metadata: const {'action': 'push'},
+          ),
+          FlightEvent(
+            id: '2',
+            timestamp: now.add(const Duration(seconds: 1)),
+            category: EventCategory.action,
+            name: 'save_tapped',
+          ),
+          FlightEvent(
+            id: '3',
+            timestamp: now.add(const Duration(seconds: 2)),
+            category: EventCategory.network,
+            name: 'PATCH /profile',
+            metadata: const {
+              'method': 'PATCH',
+              'url': '/profile',
+              'statusCode': 422,
+            },
+          ),
+        ];
+
+        await tester.pumpWidget(
+          _wrap(
+            ReportPreviewScreen(
+              incident: _incident(timeline: timeline),
+              screenshot: null,
+              onClose: () {},
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(reproductionStepsKey), findsOneWidget);
+        expect(find.text('1. Open profile'), findsOneWidget);
+        expect(find.text("2. Tap 'save tapped'"), findsOneWidget);
+        expect(
+          find.text('3. PATCH /profile request returned HTTP 422'),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('shows no severity badge when the incident has no qaReport', (
       tester,
@@ -271,6 +351,37 @@ void main() {
         expect(platform.lastParams!.files, hasLength(1));
         expect(platform.lastParams!.fileNameOverrides, ['INC-ABCDEF.json']);
         expect(platform.lastParams!.files!.single.mimeType, 'application/json');
+      },
+    );
+
+    testWidgets(
+      'Export Markdown shares a single Markdown file built from the same '
+      'incident/analysis shown on screen',
+      (tester) async {
+        final platform = _FakeSharePlatform.succeeds();
+        await tester.pumpWidget(
+          _wrap(
+            ReportPreviewScreen(
+              incident: _incident(),
+              screenshot: null,
+              onClose: () {},
+              sharePlus: SharePlus.custom(platform),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(exportMarkdownButtonKey), findsOneWidget);
+        await tester.tap(find.byKey(exportMarkdownButtonKey));
+        await tester.pumpAndSettle();
+
+        expect(platform.lastParams!.files, hasLength(1));
+        expect(platform.lastParams!.fileNameOverrides, ['INC-ABCDEF.md']);
+        expect(platform.lastParams!.files!.single.mimeType, 'text/markdown');
+        final markdown = utf8.decode(
+          await platform.lastParams!.files!.single.readAsBytes(),
+        );
+        expect(markdown, startsWith('# Profile update failed'));
       },
     );
 
